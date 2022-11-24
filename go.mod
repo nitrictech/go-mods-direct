@@ -1,4 +1,4 @@
-module github.com/asalkeld/go-mods-direct
+module github.com/nitrictech/go-mods-direct
 
 go 1.18
 
