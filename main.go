@@ -40,7 +40,9 @@ func (s *stringCommaList) Set(v string) error {
 }
 
 func main() {
-	var ignoreList = &stringCommaList{}
+	var ignoreList = &stringCommaList{
+		value: []string{},
+	}
 
 	flag.Var(ignoreList, "i", "module to ignore")
 
@@ -56,15 +58,21 @@ func main() {
 		panic(err)
 	}
 
+	if mf.Replace != nil {
+		for _, r := range mf.Replace {
+			ignoreList.value = append(ignoreList.value, r.Old.Path)
+		}
+	}
+
 	mods := []string{}
 
 	for _, r := range mf.Require {
-		if slices.Contains(ignoreList.value, r.Mod.Path) {
-			continue
-		}
-
 		if r.Indirect {
 			continue // only update directly required modules
+		}
+
+		if slices.Contains(ignoreList.value, r.Mod.Path) {
+			continue
 		}
 
 		mods = append(mods, r.Mod.Path)
